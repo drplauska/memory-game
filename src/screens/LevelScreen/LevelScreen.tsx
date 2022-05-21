@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {levels} from 'levels';
 import {Alert, FlatList, Text, View} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
@@ -7,7 +7,13 @@ import {Screens} from 'screens/screens';
 import {StyleSheet} from 'react-native';
 import HealthBarList from 'components/HealthBarList';
 import Tile from 'components/Tile';
-import {generateArray, generateRandomInteger} from 'utils';
+import {
+  generateArray,
+  generateRandomInteger,
+  getLevelStats,
+  getTilesArray,
+} from 'utils';
+import {LevelType} from 'types';
 
 type LevelScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -16,32 +22,43 @@ type LevelScreenProps = NativeStackScreenProps<
 
 const LevelScreen = ({navigation, route}: LevelScreenProps) => {
   const currentLevel = route.params.level;
-  const levelStats = levels.find(({level}) => level === currentLevel);
+  const [levelWasNotFound, setLevelWasNotFound] = useState(false);
+  const levelStats = useMemo(
+    () => getLevelStats(currentLevel, () => setLevelWasNotFound(true)),
+    [currentLevel],
+  );
 
   const [activeHealth, setActiveHealth] = useState(levelStats?.health || 9999);
-  const [activeTiles, setActiveTiles] = useState<number[] | undefined>();
-  const [tilesRevealed, setTilesRevealed] = useState(false);
-  const [checkedTiles, setCheckedTiles] = useState<number[]>([]);
-  const [wrongTiles, setWrongTiles] = useState<number[]>([]);
+  const [activeTiles, setActiveTiles] = useState<LevelType[] | undefined>();
+  const [areTilesRevealed, setAreTilesRevealed] = useState(false);
+  const [checkedTiles, setCheckedTiles] = useState<LevelType[]>([]);
+  const [wrongTiles, setWrongTiles] = useState<LevelType[]>([]);
 
   useEffect(() => {
     navigation.setOptions({headerTitle: `Level ${currentLevel}`});
-
-    startTimers();
+    revealTiles();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const startTimers = () => {
-    setTilesRevealed(true);
+  useEffect(() => {
+    if (levelWasNotFound) {
+      console.error(
+        `Level ${currentLevel} was not found! Fallbacked to first level`,
+      );
+    }
+  }, [currentLevel, levelWasNotFound]);
+
+  const revealTiles = () => {
+    setAreTilesRevealed(true);
     setTimeout(() => {
-      setTilesRevealed(false);
+      setAreTilesRevealed(false);
     }, 3000);
   };
 
-  const startShortTimers = () => {
-    setTilesRevealed(true);
+  const revealTilesShort = () => {
+    setAreTilesRevealed(true);
     setTimeout(() => {
-      setTilesRevealed(false);
+      setAreTilesRevealed(false);
     }, 1500);
   };
 
@@ -49,7 +66,7 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
     if (!levelStats || activeTiles) {
       return;
     }
-    let randomActiveTiles: number[] = [];
+    let randomActiveTiles: LevelType[] = [];
     while (randomActiveTiles.length < levelStats.activeTilesCount) {
       const random = generateRandomInteger(
         1,
@@ -64,16 +81,9 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
 
   useEffect(() => {
     if (activeHealth === 0) {
-      Alert.alert('Pralaimejai');
-      navigation.goBack();
+      Alert.alert('You lost', ';(', [{onPress: () => navigation.goBack()}]);
     }
   }, [activeHealth, navigation]);
-
-  if (!levelStats) {
-    console.error(`Level ${currentLevel} was not found`);
-    navigation.goBack();
-    return null;
-  }
 
   if (!activeTiles) {
     return <Text>Loading</Text>;
@@ -111,13 +121,10 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
   const onWrongGuess = (index: number) => {
     setWrongTiles([...wrongTiles, index]);
     setActiveHealth(activeHealth - 1);
-    startShortTimers();
+    revealTilesShort();
   };
 
-  const tilesArray = generateArray(
-    levelStats?.height * levelStats?.width,
-    null,
-  ).map((_, i) => i + 1);
+  const tilesArray = getTilesArray(levelStats.height, levelStats.width);
 
   return (
     <View style={styles.container}>
@@ -135,10 +142,10 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
             return (
               <Tile
                 key={item}
-                isActive={isActive && tilesRevealed}
+                isActive={isActive && areTilesRevealed}
                 isCompleted={isCompleted}
                 isWronged={isWronged}
-                disabled={tilesRevealed}
+                disabled={areTilesRevealed}
                 onPress={() => {
                   if (isActive) {
                     onCorrectGuess(item);

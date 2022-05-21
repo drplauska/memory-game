@@ -5,12 +5,12 @@ import LandingScreen from './screens/LandingScreen';
 import {Screens} from './screens/screens';
 import LevelsListScreen from 'screens/LevelsListScreen';
 import LevelScreen from 'screens/LevelScreen';
-import {levels} from 'levels';
+import {LevelType} from 'types';
 
 export type RootStackParamList = {
   [Screens.LandingScreen]: undefined;
   [Screens.LevelsListScreen]: undefined;
-  [Screens.LevelScreen]: {level: typeof levels[0]['level']};
+  [Screens.LevelScreen]: {level: LevelType};
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
