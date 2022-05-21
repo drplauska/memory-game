@@ -5,13 +5,19 @@ import colors from 'styles/colors';
 interface TileProps {
   isActive: boolean;
   onPress: () => void;
+  disabled: boolean;
+  isCompleted: boolean;
 }
 
-const Tile = ({isActive, onPress}: TileProps) => {
+const Tile = ({isActive, onPress, disabled, isCompleted}: TileProps) => {
   return (
     <TouchableOpacity
       onPress={onPress}
-      style={[styles.tile, isActive ? styles.activeTile : styles.inactiveTile]}
+      disabled={disabled}
+      style={[
+        styles.tile,
+        isActive || isCompleted ? styles.activeTile : styles.inactiveTile,
+      ]}
     />
   );
 };

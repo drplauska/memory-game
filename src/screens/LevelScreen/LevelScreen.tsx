@@ -1,13 +1,13 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import {levels} from 'levels';
-import {FlatList, Text, View} from 'react-native';
+import {Alert, FlatList, Text, View} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from 'MainStackNavigator';
 import {Screens} from 'screens/screens';
 import {StyleSheet} from 'react-native';
 import HealthBarList from 'components/HealthBarList';
 import Tile from 'components/Tile';
-import {generateArray, generateRandomInteger, getTileId} from 'utils';
+import {generateArray, generateRandomInteger} from 'utils';
 
 type LevelScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -18,13 +18,26 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
   const currentLevel = route.params.level;
   const levelStats = levels.find(({level}) => level === currentLevel);
 
-  const [activeHealth, setActiveHealth] = useState(levelStats?.health);
+  const [activeHealth, setActiveHealth] = useState(levelStats?.health || 9999);
   const [activeTiles, setActiveTiles] = useState<number[] | undefined>();
+  const [tilesRevealed, setTilesRevealed] = useState(false);
+  const [checkedTiles, setCheckedTiles] = useState<number[]>([]);
 
   useEffect(() => {
     navigation.setOptions({headerTitle: `Level ${currentLevel}`});
-    console.log('useeffectas');
-  }, [navigation, currentLevel]);
+
+    startTimers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const startTimers = () => {
+    setTimeout(() => {
+      setTilesRevealed(true);
+    }, 1000);
+    setTimeout(() => {
+      setTilesRevealed(false);
+    }, 5000);
+  };
 
   useEffect(() => {
     if (!levelStats || activeTiles) {
@@ -43,7 +56,14 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
     setActiveTiles(randomActiveTiles);
   }, [activeTiles, levelStats]);
 
-  if (!levelStats || !activeHealth) {
+  useEffect(() => {
+    if (activeHealth === 0) {
+      Alert.alert('Pralaimejai');
+      navigation.goBack();
+    }
+  }, [activeHealth, navigation]);
+
+  if (!levelStats) {
     console.error(`Level ${currentLevel} was not found`);
     navigation.goBack();
     return null;
@@ -52,6 +72,41 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
   if (!activeTiles) {
     return <Text>Loading</Text>;
   }
+
+  const onCorrectGuess = (index: number) => {
+    if (checkedTiles.includes(index)) {
+      return;
+    }
+    setCheckedTiles([...checkedTiles, index]);
+    if (checkedTiles.length + 1 === activeTiles.length) {
+      if (levels.find(level => level.level === currentLevel + 1)) {
+        return Alert.alert('You won', 'congrats', [
+          {
+            text: 'Go to next level',
+            onPress: () => {
+              navigation.replace(Screens.LevelScreen, {
+                level: currentLevel + 1,
+              });
+            },
+          },
+        ]);
+      }
+      Alert.alert('You finished all levels', 'congrats', [
+        {
+          text: 'Go to levels list ',
+          onPress: () => {
+            navigation.goBack();
+          },
+        },
+      ]);
+    }
+  };
+
+  const onWrongGuess = () => {
+    setCheckedTiles([]);
+    setActiveHealth(activeHealth - 1);
+    startTimers();
+  };
 
   const tilesArray = generateArray(
     levelStats?.height * levelStats?.width,
@@ -69,15 +124,18 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
           data={tilesArray}
           renderItem={({item}) => {
             const isActive = activeTiles.includes(item);
+            const isCompleted = checkedTiles.includes(item);
             return (
               <Tile
                 key={item}
-                isActive={isActive}
+                isActive={isActive && tilesRevealed}
+                isCompleted={isCompleted}
+                disabled={tilesRevealed}
                 onPress={() => {
                   if (isActive) {
-                    console.log('good');
+                    onCorrectGuess(item);
                   } else {
-                    console.log('bad');
+                    onWrongGuess();
                   }
                 }}
               />
