@@ -19,7 +19,7 @@ const LandingScreen = ({navigation}: LandingScreenProps) => {
       <Text style={styles.text}>Memory game</Text>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.push(Screens.LevelsListScreen)}>
+        onPress={() => navigation.navigate(Screens.LevelsListScreen)}>
         <Text style={styles.buttonText}>START</Text>
       </TouchableOpacity>
     </View>
