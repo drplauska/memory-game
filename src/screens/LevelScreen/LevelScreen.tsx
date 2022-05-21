@@ -27,7 +27,7 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
     [currentLevel],
   );
 
-  const [activeHealth, setActiveHealth] = useState(levelStats?.health || 9999);
+  const [activeHealth, setActiveHealth] = useState(levelStats.health);
   const [activeTiles, setActiveTiles] = useState<LevelType[] | undefined>();
   const [areTilesRevealed, setAreTilesRevealed] = useState(false);
   const [checkedTiles, setCheckedTiles] = useState<LevelType[]>([]);
