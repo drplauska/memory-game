@@ -1,18 +1,13 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import {Alert, FlatList, Text, View} from 'react-native';
+import {Alert, Text, View} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from 'MainStackNavigator';
 import {Screens} from 'screens/screens';
 import {StyleSheet} from 'react-native';
 import HealthBarList from 'components/HealthBarList';
-import Tile from 'components/Tile';
-import {
-  doesNextLevelExist,
-  generateRandomInteger,
-  getLevelStats,
-  getTilesArray,
-} from 'utils';
+import {doesNextLevelExist, generateRandomInteger, getLevelStats} from 'utils';
 import {LevelType} from 'types';
+import TilesList from 'components/TilesList';
 
 type LevelScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -88,6 +83,29 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
     return <Text>Loading</Text>;
   }
 
+  const onAllActiveTilesFound = () => {
+    if (doesNextLevelExist(currentLevel)) {
+      return Alert.alert('You won', 'congrats', [
+        {
+          text: 'Go to next level',
+          onPress: () => {
+            navigation.replace(Screens.LevelScreen, {
+              level: currentLevel + 1,
+            });
+          },
+        },
+      ]);
+    }
+    Alert.alert('You finished all levels', 'congrats', [
+      {
+        text: 'Go to levels list',
+        onPress: () => {
+          navigation.navigate(Screens.LevelsListScreen);
+        },
+      },
+    ]);
+  };
+
   const onCorrectGuess = (index: number) => {
     if (checkedTiles.includes(index)) {
       return;
@@ -95,26 +113,7 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
     setCheckedTiles([...checkedTiles, index]);
     const allActiveTilesFound = checkedTiles.length + 1 === activeTiles.length;
     if (allActiveTilesFound) {
-      if (doesNextLevelExist(currentLevel)) {
-        return Alert.alert('You won', 'congrats', [
-          {
-            text: 'Go to next level',
-            onPress: () => {
-              navigation.replace(Screens.LevelScreen, {
-                level: currentLevel + 1,
-              });
-            },
-          },
-        ]);
-      }
-      Alert.alert('You finished all levels', 'congrats', [
-        {
-          text: 'Go to levels list',
-          onPress: () => {
-            navigation.navigate(Screens.LevelsListScreen);
-          },
-        },
-      ]);
+      onAllActiveTilesFound();
     }
   };
 
@@ -124,8 +123,6 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
     revealTilesShort();
   };
 
-  const tilesArray = getTilesArray(levelStats.height, levelStats.width);
-
   return (
     <View style={styles.container}>
       <HealthBarList
@@ -133,30 +130,14 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
         activeHealth={activeHealth}
       />
       <View style={styles.tilesContainer}>
-        <FlatList
-          data={tilesArray}
-          renderItem={({item}) => {
-            const isActive = activeTiles.includes(item);
-            const isCompleted = checkedTiles.includes(item);
-            const isWronged = wrongTiles.includes(item);
-            return (
-              <Tile
-                key={item}
-                isActive={isActive && areTilesRevealed}
-                isCompleted={isCompleted}
-                isWronged={isWronged}
-                disabled={areTilesRevealed}
-                onPress={() => {
-                  if (isActive) {
-                    onCorrectGuess(item);
-                  } else {
-                    onWrongGuess(item);
-                  }
-                }}
-              />
-            );
-          }}
-          numColumns={levelStats.width}
+        <TilesList
+          activeTiles={activeTiles}
+          areTilesRevealed={areTilesRevealed}
+          checkedTiles={checkedTiles}
+          levelStats={levelStats}
+          onCorrectGuess={onCorrectGuess}
+          onWrongGuess={onWrongGuess}
+          wrongTiles={wrongTiles}
         />
       </View>
     </View>

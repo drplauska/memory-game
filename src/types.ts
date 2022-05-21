@@ -1,4 +1,4 @@
-export type LevelObjectType = {
+export type LevelStatsType = {
   level: number;
   width: number;
   height: number;
@@ -6,4 +6,4 @@ export type LevelObjectType = {
   activeTilesCount: number;
 };
 
-export type LevelType = LevelObjectType['level'];
+export type LevelType = LevelStatsType['level'];
