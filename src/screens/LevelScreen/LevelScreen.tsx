@@ -83,7 +83,7 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
     return <Text>Loading</Text>;
   }
 
-  const onAllActiveTilesFound = () => {
+  const handleEndgameAlertAndNavigation = () => {
     if (doesNextLevelExist(currentLevel)) {
       return Alert.alert('You won', 'congrats', [
         {
@@ -113,7 +113,7 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
     setCheckedTiles([...checkedTiles, index]);
     const allActiveTilesFound = checkedTiles.length + 1 === activeTiles.length;
     if (allActiveTilesFound) {
-      onAllActiveTilesFound();
+      handleEndgameAlertAndNavigation();
     }
   };
 
