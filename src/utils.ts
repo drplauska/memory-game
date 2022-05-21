@@ -21,3 +21,6 @@ export const getLevelStats = (currentLevel: LevelType, onFail: () => void) => {
 
 export const getTilesArray = (height: number, width: number) =>
   generateArray(height * width, null).map((_, i) => i + 1);
+
+export const doesNextLevelExist = (currentLevel: LevelType) =>
+  levels.find(level => level.level === currentLevel + 1);

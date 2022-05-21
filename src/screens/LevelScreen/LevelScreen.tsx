@@ -1,5 +1,4 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import {levels} from 'levels';
 import {Alert, FlatList, Text, View} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from 'MainStackNavigator';
@@ -8,7 +7,7 @@ import {StyleSheet} from 'react-native';
 import HealthBarList from 'components/HealthBarList';
 import Tile from 'components/Tile';
 import {
-  generateArray,
+  doesNextLevelExist,
   generateRandomInteger,
   getLevelStats,
   getTilesArray,
@@ -94,8 +93,9 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
       return;
     }
     setCheckedTiles([...checkedTiles, index]);
-    if (checkedTiles.length + 1 === activeTiles.length) {
-      if (levels.find(level => level.level === currentLevel + 1)) {
+    const allActiveTilesFound = checkedTiles.length + 1 === activeTiles.length;
+    if (allActiveTilesFound) {
+      if (doesNextLevelExist(currentLevel)) {
         return Alert.alert('You won', 'congrats', [
           {
             text: 'Go to next level',
@@ -109,9 +109,9 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
       }
       Alert.alert('You finished all levels', 'congrats', [
         {
-          text: 'Go to levels list ',
+          text: 'Go to levels list',
           onPress: () => {
-            navigation.goBack();
+            navigation.navigate(Screens.LevelsListScreen);
           },
         },
       ]);
