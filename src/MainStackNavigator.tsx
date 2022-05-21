@@ -20,7 +20,7 @@ const MainStackNavigator: React.FC = () => {
         name={Screens.LandingScreen}
         component={LandingScreen}
         options={{
-          headerTitle: 'Landing screen',
+          headerShown: false,
         }}
       />
       {/* <Stack.Screen
