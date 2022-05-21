@@ -7,16 +7,27 @@ interface TileProps {
   onPress: () => void;
   disabled: boolean;
   isCompleted: boolean;
+  isWronged: boolean;
 }
 
-const Tile = ({isActive, onPress, disabled, isCompleted}: TileProps) => {
+const Tile = ({
+  isActive,
+  onPress,
+  disabled,
+  isCompleted,
+  isWronged,
+}: TileProps) => {
   return (
     <TouchableOpacity
       onPress={onPress}
       disabled={disabled}
       style={[
         styles.tile,
-        isActive || isCompleted ? styles.activeTile : styles.inactiveTile,
+        isActive || isCompleted
+          ? styles.activeTile
+          : isWronged
+          ? styles.wrongedTile
+          : styles.inactiveTile,
       ]}
     />
   );
@@ -34,6 +45,9 @@ const styles = StyleSheet.create({
   },
   inactiveTile: {
     backgroundColor: 'gray',
+  },
+  wrongedTile: {
+    backgroundColor: colors.wrong,
   },
 });
 

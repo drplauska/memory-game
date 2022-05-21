@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {levels} from 'levels';
 import {Alert, FlatList, Text, View} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
@@ -22,6 +22,7 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
   const [activeTiles, setActiveTiles] = useState<number[] | undefined>();
   const [tilesRevealed, setTilesRevealed] = useState(false);
   const [checkedTiles, setCheckedTiles] = useState<number[]>([]);
+  const [wrongTiles, setWrongTiles] = useState<number[]>([]);
 
   useEffect(() => {
     navigation.setOptions({headerTitle: `Level ${currentLevel}`});
@@ -31,12 +32,17 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
   }, []);
 
   const startTimers = () => {
-    setTimeout(() => {
-      setTilesRevealed(true);
-    }, 1000);
+    setTilesRevealed(true);
     setTimeout(() => {
       setTilesRevealed(false);
-    }, 5000);
+    }, 3000);
+  };
+
+  const startShortTimers = () => {
+    setTilesRevealed(true);
+    setTimeout(() => {
+      setTilesRevealed(false);
+    }, 1500);
   };
 
   useEffect(() => {
@@ -102,10 +108,10 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
     }
   };
 
-  const onWrongGuess = () => {
-    setCheckedTiles([]);
+  const onWrongGuess = (index: number) => {
+    setWrongTiles([...wrongTiles, index]);
     setActiveHealth(activeHealth - 1);
-    startTimers();
+    startShortTimers();
   };
 
   const tilesArray = generateArray(
@@ -125,17 +131,19 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
           renderItem={({item}) => {
             const isActive = activeTiles.includes(item);
             const isCompleted = checkedTiles.includes(item);
+            const isWronged = wrongTiles.includes(item);
             return (
               <Tile
                 key={item}
                 isActive={isActive && tilesRevealed}
                 isCompleted={isCompleted}
+                isWronged={isWronged}
                 disabled={tilesRevealed}
                 onPress={() => {
                   if (isActive) {
                     onCorrectGuess(item);
                   } else {
-                    onWrongGuess();
+                    onWrongGuess(item);
                   }
                 }}
               />
