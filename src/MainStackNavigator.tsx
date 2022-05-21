@@ -4,10 +4,13 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import LandingScreen from './screens/LandingScreen';
 import {Screens} from './screens/screens';
 import LevelsListScreen from 'screens/LevelsListScreen';
+import LevelScreen from 'screens/LevelScreen';
+import {levels} from 'levels';
 
 export type RootStackParamList = {
   [Screens.LandingScreen]: undefined;
   [Screens.LevelsListScreen]: undefined;
+  [Screens.LevelScreen]: {level: typeof levels[0]['level']};
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -28,6 +31,11 @@ const MainStackNavigator: React.FC = () => {
         name={Screens.LevelsListScreen}
         component={LevelsListScreen}
         options={{headerTitle: 'Levels'}}
+      />
+      <Stack.Screen
+        name={Screens.LevelScreen}
+        component={LevelScreen}
+        options={{headerTitle: 'Level ...'}}
       />
     </Stack.Navigator>
   );
