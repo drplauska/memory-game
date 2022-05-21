@@ -3,6 +3,7 @@ import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import LandingScreen from './screens/LandingScreen';
 import {Screens} from './screens/screens';
+import LevelsListScreen from 'screens/LevelsListScreen';
 
 export type RootStackParamList = {
   [Screens.LandingScreen]: undefined;
@@ -23,22 +24,11 @@ const MainStackNavigator: React.FC = () => {
           headerShown: false,
         }}
       />
-      {/* <Stack.Screen
-        name="ChannelScreen"
-        component={ChannelScreen}
-        initialParams={{
-          loading: true,
-        }}
-        options={({route}) => ({
-          headerTitle: () => (
-            <HeaderTitle
-              membersCount={route.params.totalMembers}
-              onlineMembersCount={route.params.onlineMembers}
-              loading={route.params.loading || false}
-            />
-          ),
-        })}
-      /> */}
+      <Stack.Screen
+        name={Screens.LevelsListScreen}
+        component={LevelsListScreen}
+        options={{headerTitle: 'Levels'}}
+      />
     </Stack.Navigator>
   );
 };

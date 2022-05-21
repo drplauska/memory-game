@@ -1,7 +1,15 @@
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {RootStackParamList} from 'MainStackNavigator';
 import React from 'react';
 import {Text, Image, View, StyleSheet, TouchableOpacity} from 'react-native';
+import {Screens} from 'screens/screens';
 
-const LandingScreen = () => {
+type LandingScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  Screens.LandingScreen
+>;
+
+const LandingScreen = ({navigation}: LandingScreenProps) => {
   return (
     <View style={styles.container}>
       <Image
@@ -11,7 +19,7 @@ const LandingScreen = () => {
       <Text style={styles.text}>Memory game</Text>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => console.error('start')}>
+        onPress={() => navigation.push(Screens.LevelsListScreen)}>
         <Text style={styles.buttonText}>START</Text>
       </TouchableOpacity>
     </View>
