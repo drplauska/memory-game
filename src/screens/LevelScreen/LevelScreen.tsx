@@ -103,6 +103,12 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
           navigation.navigate(Screens.LevelsListScreen);
         },
       },
+      {
+        text: 'Replay!',
+        onPress: () => {
+          navigation.replace(Screens.LevelScreen, {level: currentLevel});
+        },
+      },
     ]);
   };
 
