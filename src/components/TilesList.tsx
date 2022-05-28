@@ -29,6 +29,8 @@ const TilesList = ({
   return (
     <FlatList
       data={tilesArray}
+      numColumns={levelStats.width}
+      scrollEnabled={false}
       renderItem={({item}) => {
         const isGreen = activeTiles.includes(item);
         const isCompleted = checkedTiles.includes(item);
@@ -50,7 +52,6 @@ const TilesList = ({
           />
         );
       }}
-      numColumns={levelStats.width}
     />
   );
 };
