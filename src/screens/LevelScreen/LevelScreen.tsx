@@ -78,7 +78,6 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
   useEffect(() => {
     if (activeHealth === 0) {
       setIsLost(true);
-      // Alert.alert('You lost', ';(', [{onPress: () => navigation.goBack()}]);
     }
   }, [activeHealth, navigation]);
 
