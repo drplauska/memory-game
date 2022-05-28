@@ -12,6 +12,7 @@ interface TilesListProps {
   onCorrectGuess: (level: LevelType) => void;
   onWrongGuess: (level: LevelType) => void;
   areTilesRevealed: boolean;
+  disabled: boolean;
 }
 
 const TilesList = ({
@@ -22,24 +23,25 @@ const TilesList = ({
   onCorrectGuess,
   onWrongGuess,
   areTilesRevealed,
+  disabled,
 }: TilesListProps) => {
   const tilesArray = getTilesArray(levelStats.height, levelStats.width);
   return (
     <FlatList
       data={tilesArray}
       renderItem={({item}) => {
-        const isActive = activeTiles.includes(item);
+        const isGreen = activeTiles.includes(item);
         const isCompleted = checkedTiles.includes(item);
         const isWronged = wrongTiles.includes(item);
         return (
           <Tile
             key={item}
-            isActive={isActive && areTilesRevealed}
+            isGreen={isGreen && areTilesRevealed}
             isCompleted={isCompleted}
             isWronged={isWronged}
-            disabled={areTilesRevealed}
+            disabled={areTilesRevealed || disabled}
             onPress={() => {
-              if (isActive) {
+              if (isGreen) {
                 onCorrectGuess(item);
               } else {
                 onWrongGuess(item);

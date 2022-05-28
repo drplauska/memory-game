@@ -3,7 +3,7 @@ import {StyleSheet, TouchableOpacity} from 'react-native';
 import colors from 'styles/colors';
 
 interface TileProps {
-  isActive: boolean;
+  isGreen: boolean;
   onPress: () => void;
   disabled: boolean;
   isCompleted: boolean;
@@ -11,7 +11,7 @@ interface TileProps {
 }
 
 const Tile = ({
-  isActive,
+  isGreen,
   onPress,
   disabled,
   isCompleted,
@@ -23,7 +23,7 @@ const Tile = ({
       disabled={disabled}
       style={[
         styles.tile,
-        isActive || isCompleted
+        isGreen || isCompleted
           ? styles.activeTile
           : isWronged
           ? styles.wrongedTile

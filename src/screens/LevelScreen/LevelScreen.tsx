@@ -8,6 +8,7 @@ import HealthBarList from 'components/HealthBarList';
 import {doesNextLevelExist, generateRandomInteger, getLevelStats} from 'utils';
 import {LevelType} from 'types';
 import TilesList from 'components/TilesList';
+import BottomButton from 'components/BottomButton';
 
 type LevelScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -27,6 +28,7 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
   const [areTilesRevealed, setAreTilesRevealed] = useState(false);
   const [checkedTiles, setCheckedTiles] = useState<LevelType[]>([]);
   const [wrongTiles, setWrongTiles] = useState<LevelType[]>([]);
+  const [isLost, setIsLost] = useState(false);
 
   useEffect(() => {
     navigation.setOptions({headerTitle: `Level ${currentLevel}`});
@@ -75,7 +77,8 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
 
   useEffect(() => {
     if (activeHealth === 0) {
-      Alert.alert('You lost', ';(', [{onPress: () => navigation.goBack()}]);
+      setIsLost(true);
+      // Alert.alert('You lost', ';(', [{onPress: () => navigation.goBack()}]);
     }
   }, [activeHealth, navigation]);
 
@@ -129,6 +132,10 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
     revealTilesShort();
   };
 
+  const restartGame = () => {
+    navigation.replace(Screens.LevelScreen, {level: currentLevel});
+  };
+
   return (
     <View style={styles.container}>
       <HealthBarList
@@ -138,14 +145,16 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
       <View style={styles.tilesContainer}>
         <TilesList
           activeTiles={activeTiles}
-          areTilesRevealed={areTilesRevealed}
+          areTilesRevealed={areTilesRevealed || isLost}
           checkedTiles={checkedTiles}
           levelStats={levelStats}
           onCorrectGuess={onCorrectGuess}
           onWrongGuess={onWrongGuess}
           wrongTiles={wrongTiles}
+          disabled={isLost}
         />
       </View>
+      <BottomButton text="Restart" onPress={restartGame} isVisible={isLost} />
     </View>
   );
 };
