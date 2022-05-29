@@ -8,7 +8,7 @@ const useTimer = (callback: () => void) => {
 
   useEffect(() => {
     return () => {
-      clearInterval(interval.current);
+      clearTimeout(interval.current);
     };
   }, []);
 
