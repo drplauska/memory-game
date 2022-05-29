@@ -10,6 +10,7 @@ import {
   generateRandomInteger,
   getFormattedTime,
   getLevelStats,
+  getTimeUntilAllTilesShow,
 } from 'utils';
 import {LevelType} from 'types';
 import TilesList from 'components/TilesList';
@@ -42,7 +43,10 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
 
   useEffect(() => {
     navigation.setOptions({headerTitle: `Level ${currentLevel}`});
-    revealTiles(levelStats.revealTime);
+
+    setTimeout(() => {
+      revealTiles(levelStats.revealTime);
+    }, getTimeUntilAllTilesShow(levelStats.width, levelStats.height));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

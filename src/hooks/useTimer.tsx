@@ -16,7 +16,6 @@ const useTimer = (callback: () => void) => {
     if (!isTimerActive) {
       return;
     }
-    console.log(timeLeft);
     if (timeLeft > 0) {
       interval.current = setTimeout(() => {
         setTimeLeft(currentTimeLeft => currentTimeLeft - 1);

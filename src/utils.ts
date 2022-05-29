@@ -1,3 +1,4 @@
+import consts from 'consts';
 import {levels} from 'levels';
 import {LevelType} from 'types';
 
@@ -32,4 +33,14 @@ export const getFormattedTime = (timeInSeconds: number) => {
   const seconds = (timeInSeconds % 60).toString().padStart(2, '0');
 
   return `${minutes}:${seconds}`;
+};
+
+export const getTimeUntilAllTilesShow = (
+  levelWidth: number,
+  levelHeight: number,
+) => {
+  return (
+    levelWidth * levelHeight * consts.ENTERING_DELAY +
+    consts.ENTERING_WAITING_TIME
+  );
 };

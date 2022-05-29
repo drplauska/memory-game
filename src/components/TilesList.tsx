@@ -3,6 +3,7 @@ import {FlatList} from 'react-native';
 import Tile from 'components/Tile';
 import {getTilesArray} from 'utils';
 import {LevelStatsType, LevelType} from 'types';
+import consts from 'consts';
 
 interface TilesListProps {
   levelStats: LevelStatsType;
@@ -31,7 +32,7 @@ const TilesList = ({
       data={tilesArray}
       numColumns={levelStats.width}
       scrollEnabled={false}
-      renderItem={({item}) => {
+      renderItem={({item, index}) => {
         const isGreen = activeTiles.includes(item);
         const isCompleted = checkedTiles.includes(item);
         const isWronged = wrongTiles.includes(item);
@@ -49,6 +50,7 @@ const TilesList = ({
                 onWrongGuess(item);
               }
             }}
+            enteringDelay={index * consts.ENTERING_DELAY}
           />
         );
       }}
