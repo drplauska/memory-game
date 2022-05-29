@@ -132,6 +132,7 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
   };
 
   const onWrongGuess = (index: number) => {
+    return;
     setWrongTiles([...wrongTiles, index]);
     setActiveHealth(activeHealth - 1);
     if (activeHealth > 1) {

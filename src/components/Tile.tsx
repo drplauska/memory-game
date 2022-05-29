@@ -1,7 +1,11 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, TouchableOpacity} from 'react-native';
 import colors from 'styles/colors';
-import Animated, {FlipInEasyX} from 'react-native-reanimated';
+import Animated, {
+  FlipInEasyX,
+  useAnimatedStyle,
+  withTiming,
+} from 'react-native-reanimated';
 
 interface TileProps {
   isGreen: boolean;
@@ -20,18 +24,30 @@ const Tile = ({
   isWronged,
   enteringDelay,
 }: TileProps) => {
+  const [color, setColor] = useState(colors.gray);
+
+  useEffect(() => {
+    if (isGreen || isCompleted) {
+      setColor(colors.main);
+      return;
+    }
+    if (isWronged) {
+      setColor(colors.wrong);
+      return;
+    }
+    setColor(colors.gray);
+  }, [isCompleted, isGreen, isWronged]);
+
+  const backgroundInterpolate = useAnimatedStyle(
+    () => ({backgroundColor: withTiming(color, {duration: 250})}),
+    [color],
+  );
+
   return (
     <TouchableOpacity onPress={onPress} disabled={disabled}>
       <Animated.View
         entering={FlipInEasyX.delay(enteringDelay)}
-        style={[
-          styles.tile,
-          isGreen || isCompleted
-            ? styles.activeTile
-            : isWronged
-            ? styles.wrongedTile
-            : styles.inactiveTile,
-        ]}
+        style={[styles.tile, backgroundInterpolate]}
       />
     </TouchableOpacity>
   );
@@ -43,15 +59,6 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 4,
     margin: 5,
-  },
-  activeTile: {
-    backgroundColor: colors.main,
-  },
-  inactiveTile: {
-    backgroundColor: 'gray',
-  },
-  wrongedTile: {
-    backgroundColor: colors.wrong,
   },
 });
 
