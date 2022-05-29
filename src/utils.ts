@@ -11,7 +11,10 @@ export const generateRandomInteger = (min: number, max: number) => {
   return Math.floor(min + Math.random() * (max - min + 1));
 };
 
-export const getLevelStats = (currentLevel: LevelType, onFail: () => void) => {
+export const getLevelStatsOrFallback = (
+  currentLevel: LevelType,
+  onFail: () => void,
+) => {
   const levelStats = levels.find(({level}) => level === currentLevel);
   if (!levelStats) {
     onFail();

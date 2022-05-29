@@ -9,7 +9,7 @@ import {
   doesNextLevelExist,
   generateRandomInteger,
   getFormattedTime,
-  getLevelStats,
+  getLevelStatsOrFallback,
   getTimeUntilAllTilesShow,
 } from 'utils';
 import {LevelType} from 'types';
@@ -27,7 +27,8 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
   const currentLevel = route.params.level;
   const [levelWasNotFound, setLevelWasNotFound] = useState(false);
   const levelStats = useMemo(
-    () => getLevelStats(currentLevel, () => setLevelWasNotFound(true)),
+    () =>
+      getLevelStatsOrFallback(currentLevel, () => setLevelWasNotFound(true)),
     [currentLevel],
   );
 
