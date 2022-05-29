@@ -1,16 +1,15 @@
 import React from 'react';
-import {Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {Text, StyleSheet} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import colors from 'styles/colors';
 import Animated, {FadeInDown, FadeOutDown} from 'react-native-reanimated';
 
-interface BottomButtonProps {
-  onPress: () => void;
+interface BottomInfoProps {
   isVisible: boolean;
   text: string;
 }
 
-const BottomButton = ({onPress, isVisible, text}: BottomButtonProps) => {
+const BottomInfo = ({isVisible, text}: BottomInfoProps) => {
   const insets = useSafeAreaInsets();
 
   if (!isVisible) {
@@ -18,20 +17,15 @@ const BottomButton = ({onPress, isVisible, text}: BottomButtonProps) => {
   }
   return (
     <Animated.View
-      style={styles.container}
+      style={[
+        styles.container,
+        {
+          paddingBottom: insets.bottom + 10,
+        },
+      ]}
       entering={FadeInDown}
       exiting={FadeOutDown}>
-      <TouchableOpacity
-        onPress={onPress}
-        activeOpacity={0.7}
-        style={[
-          styles.button,
-          {
-            paddingBottom: insets.bottom + 10,
-          },
-        ]}>
-        <Text style={styles.text}>{text}</Text>
-      </TouchableOpacity>
+      <Text style={styles.text}>{text}</Text>
     </Animated.View>
   );
 };
@@ -43,8 +37,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-  },
-  button: {
     paddingTop: 20,
     justifyContent: 'center',
     alignItems: 'center',
@@ -56,4 +48,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default BottomButton;
+export default BottomInfo;

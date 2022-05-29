@@ -24,3 +24,12 @@ export const getTilesArray = (height: number, width: number) =>
 
 export const doesNextLevelExist = (currentLevel: LevelType) =>
   levels.find(level => level.level === currentLevel + 1);
+
+export const getFormattedTime = (timeInSeconds: number) => {
+  const minutes = Math.floor(timeInSeconds / 60)
+    .toString()
+    .padStart(2, '0');
+  const seconds = (timeInSeconds % 60).toString().padStart(2, '0');
+
+  return `${minutes}:${seconds}`;
+};

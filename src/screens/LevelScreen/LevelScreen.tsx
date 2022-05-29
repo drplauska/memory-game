@@ -5,10 +5,17 @@ import {RootStackParamList} from 'MainStackNavigator';
 import {Screens} from 'screens/screens';
 import {StyleSheet} from 'react-native';
 import HealthBarList from 'components/HealthBarList';
-import {doesNextLevelExist, generateRandomInteger, getLevelStats} from 'utils';
+import {
+  doesNextLevelExist,
+  generateRandomInteger,
+  getFormattedTime,
+  getLevelStats,
+} from 'utils';
 import {LevelType} from 'types';
 import TilesList from 'components/TilesList';
 import BottomButton from 'components/BottomButton';
+import useTimer from 'hooks/useTimer';
+import BottomInfo from 'components/BottomInfo';
 
 type LevelScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -29,10 +36,13 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
   const [checkedTiles, setCheckedTiles] = useState<LevelType[]>([]);
   const [wrongTiles, setWrongTiles] = useState<LevelType[]>([]);
   const [isLost, setIsLost] = useState(false);
+  const {isTimerActive, startTimer, timeLeft} = useTimer(() =>
+    setAreTilesRevealed(false),
+  );
 
   useEffect(() => {
     navigation.setOptions({headerTitle: `Level ${currentLevel}`});
-    revealTiles();
+    revealTiles(levelStats.revealTime);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -44,18 +54,9 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
     }
   }, [currentLevel, levelWasNotFound]);
 
-  const revealTiles = () => {
+  const revealTiles = (time: number) => {
     setAreTilesRevealed(true);
-    setTimeout(() => {
-      setAreTilesRevealed(false);
-    }, 3000);
-  };
-
-  const revealTilesShort = () => {
-    setAreTilesRevealed(true);
-    setTimeout(() => {
-      setAreTilesRevealed(false);
-    }, 1500);
+    startTimer(time);
   };
 
   useEffect(() => {
@@ -128,7 +129,9 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
   const onWrongGuess = (index: number) => {
     setWrongTiles([...wrongTiles, index]);
     setActiveHealth(activeHealth - 1);
-    revealTilesShort();
+    if (activeHealth > 1) {
+      revealTiles(levelStats.shortRevealTime);
+    }
   };
 
   const restartGame = () => {
@@ -154,6 +157,7 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
         />
       </View>
       <BottomButton text="Restart" onPress={restartGame} isVisible={isLost} />
+      <BottomInfo isVisible={isTimerActive} text={getFormattedTime(timeLeft)} />
     </View>
   );
 };

@@ -4,6 +4,8 @@ export type LevelStatsType = {
   height: number;
   health: number;
   activeTilesCount: number;
+  revealTime: number;
+  shortRevealTime: number;
 };
 
 export type LevelType = LevelStatsType['level'];
