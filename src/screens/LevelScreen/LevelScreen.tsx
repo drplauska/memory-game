@@ -37,9 +37,7 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
   const [checkedTiles, setCheckedTiles] = useState<LevelType[]>([]);
   const [wrongTiles, setWrongTiles] = useState<LevelType[]>([]);
   const [isLost, setIsLost] = useState(false);
-  const {isTimerActive, startTimer, totalTime} = useTimer(() =>
-    setAreTilesRevealed(false),
-  );
+  const {isTimerActive, startTimer, totalTime} = useTimer();
 
   useEffect(() => {
     setTimeout(() => {
@@ -58,7 +56,7 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
 
   const revealTiles = (time: number) => {
     setAreTilesRevealed(true);
-    startTimer(time * 1000);
+    startTimer(time * 1000, () => setAreTilesRevealed(false));
   };
 
   useEffect(() => {
