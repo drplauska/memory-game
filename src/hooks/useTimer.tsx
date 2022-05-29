@@ -18,8 +18,8 @@ const useTimer = (callback: () => void) => {
     }
     if (timeLeft > 0) {
       interval.current = setTimeout(() => {
-        setTimeLeft(currentTimeLeft => currentTimeLeft - 1);
-      }, 1000);
+        setTimeLeft(currentTimeLeft => currentTimeLeft - 100); // this is not accurate
+      }, 50);
       return;
     }
     setIsTimerActive(false);

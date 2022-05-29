@@ -35,7 +35,7 @@ const MainStackNavigator: React.FC = () => {
       <Stack.Screen
         name={Screens.LevelScreen}
         component={LevelScreen}
-        options={{headerTitle: 'Level ...'}}
+        options={({route}) => ({headerTitle: `Level ${route.params.level}`})}
       />
     </Stack.Navigator>
   );

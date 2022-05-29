@@ -8,7 +8,6 @@ import HealthBarList from 'components/HealthBarList';
 import {
   doesNextLevelExist,
   generateRandomInteger,
-  getFormattedTime,
   getLevelStatsOrFallback,
   getTimeUntilAllTilesShow,
 } from 'utils';
@@ -16,7 +15,7 @@ import {LevelType} from 'types';
 import TilesList from 'components/TilesList';
 import BottomButton from 'components/BottomButton';
 import useTimer from 'hooks/useTimer';
-import BottomInfo from 'components/BottomInfo';
+import BottomProgressBar from 'components/BottomProgressBar';
 
 type LevelScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -38,13 +37,11 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
   const [checkedTiles, setCheckedTiles] = useState<LevelType[]>([]);
   const [wrongTiles, setWrongTiles] = useState<LevelType[]>([]);
   const [isLost, setIsLost] = useState(false);
-  const {isTimerActive, startTimer, timeLeft} = useTimer(() =>
+  const {isTimerActive, startTimer, totalTime} = useTimer(() =>
     setAreTilesRevealed(false),
   );
 
   useEffect(() => {
-    navigation.setOptions({headerTitle: `Level ${currentLevel}`});
-
     setTimeout(() => {
       revealTiles(levelStats.revealTime);
     }, getTimeUntilAllTilesShow(levelStats.width, levelStats.height));
@@ -61,7 +58,7 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
 
   const revealTiles = (time: number) => {
     setAreTilesRevealed(true);
-    startTimer(time);
+    startTimer(time * 1000);
   };
 
   useEffect(() => {
@@ -162,7 +159,7 @@ const LevelScreen = ({navigation, route}: LevelScreenProps) => {
         />
       </View>
       <BottomButton text="Restart" onPress={restartGame} isVisible={isLost} />
-      <BottomInfo isVisible={isTimerActive} text={getFormattedTime(timeLeft)} />
+      <BottomProgressBar isVisible={isTimerActive} total={totalTime} />
     </View>
   );
 };
